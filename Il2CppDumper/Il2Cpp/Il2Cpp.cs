@@ -56,6 +56,18 @@ namespace Il2CppDumper
                 if (Version >= 24.2)
                 {
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
+                    if (Version == 31)
+                    {
+                        if (pCodeRegistration.genericMethodPointersCount > limit)
+                        {
+                            codeRegistration -= PointerSize * 2;
+                        }
+                        else
+                        {
+                            Version = 29;
+                            Console.WriteLine($"Change il2cpp version to: {Version}");
+                        }
+                    }
                     if (Version == 29)
                     {
                         if (pCodeRegistration.genericMethodPointersCount > limit)
@@ -180,7 +192,6 @@ namespace Il2CppDumper
                 fieldOffsets = Array.ConvertAll(MapVATR<uint>(pMetadataRegistration.fieldOffsets, pMetadataRegistration.fieldOffsetsCount), x => (ulong)x);
             }
             var pTypes = MapVATR<ulong>(pMetadataRegistration.types, pMetadataRegistration.typesCount);
-            Console.WriteLine($"pMetadataRegistration.typesCount: {pMetadataRegistration.typesCount}");
             types = new Il2CppType[pMetadataRegistration.typesCount];
             for (var i = 0; i < pMetadataRegistration.typesCount; ++i)
             {

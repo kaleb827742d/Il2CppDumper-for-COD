@@ -38,7 +38,7 @@ namespace Il2CppDumper
             this.metadata = metadata;
             this.il2Cpp = il2Cpp;
 
-            /*if (il2Cpp.Version >= 27 && il2Cpp.Version < 29)
+            if (il2Cpp.Version >= 27 && il2Cpp.Version < 29)
             {
                 customAttributeGenerators = new ulong[metadata.imageDefs.Sum(x => x.customAttributeCount)];
                 foreach (var imageDef in metadata.imageDefs)
@@ -52,7 +52,7 @@ namespace Il2CppDumper
                     }
                 }
             }
-            else */if (il2Cpp.Version < 27)
+            else if (il2Cpp.Version < 27)
             {
                 customAttributeGenerators = il2Cpp.customAttributeGenerators;
             }
@@ -239,11 +239,11 @@ namespace Il2CppDumper
         public Il2CppRGCTXDefinition[] GetRGCTXDefinition(string imageName, Il2CppTypeDefinition typeDef)
         {
             Il2CppRGCTXDefinition[] collection = null;
-            /*if (il2Cpp.Version >= 24.2)
+            if (il2Cpp.Version >= 24.2)
             {
                 il2Cpp.rgctxsDictionary[imageName].TryGetValue(typeDef.token, out collection);
             }
-            else*/
+            else
             {
                 if (typeDef.rgctxCount > 0)
                 {

@@ -52,13 +52,13 @@ namespace Il2CppDumper
             {
                 throw new InvalidDataException("ERROR: Metadata file supplied is not valid metadata file.");
             }
-            if (version < 16 || version > 29)
+            if (version < 16 || version > 31)
             {
                 throw new NotSupportedException($"ERROR: Metadata file supplied is not a supported version[{version}].");
             }
             Version = version;
             header = ReadClass<Il2CppGlobalMetadataHeader>(0);
-            /*if (version == 24)
+            if (version == 24)
             {
                 if (header.stringLiteralOffset == 264)
                 {
@@ -73,7 +73,7 @@ namespace Il2CppDumper
                         Version = 24.1;
                     }
                 }
-            }*/
+            }
             imageDefs = ReadMetadataClassArray<Il2CppImageDefinition>(header.imagesOffset, header.imagesSize);
             if (Version == 24.2 && header.assembliesSize / 68 < imageDefs.Length)
             {
@@ -110,7 +110,6 @@ namespace Il2CppDumper
             constraintIndices = ReadClassArray<int>(header.genericParameterConstraintsOffset, header.genericParameterConstraintsSize / 4);
             vtableMethods = ReadClassArray<uint>(header.vtableMethodsOffset, header.vtableMethodsSize / 4);
             stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(header.stringLiteralOffset, header.stringLiteralSize);
-            Console.WriteLine($"Il2cppdumper for COD made by tien0246 form iOSGods");
             if (Version > 16)
             {
                 fieldRefs = ReadMetadataClassArray<Il2CppFieldRef>(header.fieldRefsOffset, header.fieldRefsSize);
@@ -118,6 +117,7 @@ namespace Il2CppDumper
                 {
                     metadataUsageLists = ReadMetadataClassArray<Il2CppMetadataUsageList>(header.metadataUsageListsOffset, header.metadataUsageListsCount);
                     metadataUsagePairs = ReadMetadataClassArray<Il2CppMetadataUsagePair>(header.metadataUsagePairsOffset, header.metadataUsagePairsCount);
+
                     ProcessingMetadataUsage();
                 }
             }
@@ -130,7 +130,7 @@ namespace Il2CppDumper
             {
                 attributeDataRanges = ReadMetadataClassArray<Il2CppCustomAttributeDataRange>(header.attributeDataRangeOffset, header.attributeDataRangeSize);
             }
-            /*if (Version > 24)
+            if (Version > 24)
             {
                 attributeTypeRangesDic = new Dictionary<Il2CppImageDefinition, Dictionary<uint, int>>();
                 foreach (var imageDef in imageDefs)
@@ -150,7 +150,7 @@ namespace Il2CppDumper
                         }
                     }
                 }
-            }*/
+            }
             if (Version <= 24.1)
             {
                 rgctxEntries = ReadMetadataClassArray<Il2CppRGCTXDefinition>(header.rgctxEntriesOffset, header.rgctxEntriesCount);
@@ -225,7 +225,7 @@ namespace Il2CppDumper
                 for (int i = 0; i < metadataUsageList.count; i++)
                 {
                     var offset = metadataUsageList.start + i;
-                    if (offset >= metadataUsagePairs.Length - 1)
+                    if (offset >= metadataUsagePairs.Length)
                     {
                         continue;
                     }
@@ -235,7 +235,7 @@ namespace Il2CppDumper
                     metadataUsageDic[(Il2CppMetadataUsage)usage][metadataUsagePair.destinationIndex] = decodedIndex;
                 }
             }
-            metadataUsagesCount = metadataUsagePairs.Max(x => x.destinationIndex) + 1;
+            //metadataUsagesCount = metadataUsagePairs.Max(x => x.destinationIndex) + 1;
             metadataUsagesCount = metadataUsageDic.Max(x => x.Value.Select(y => y.Key).DefaultIfEmpty().Max()) + 1;
         }
 
